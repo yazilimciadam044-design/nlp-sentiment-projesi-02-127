@@ -221,13 +221,60 @@ hr { border-color: rgba(255,255,255,0.1) !important; }
 # ─── Yardımcı Fonksiyonlar ─────────────────────────────────────────────────────
 def check_backend_health() -> dict:
     try:
-        r = requests.get(f"{BACKEND_URL}/health", timeout=5)
+        r = requests.get(f"{BACKEND_URL}/health", timeout=2)
         return r.json()
     except Exception:
         return {"status": "offline", "model_loaded": False}
 
 
+@st.cache_resource
+def get_local_pipeline():
+    from transformers import pipeline
+    model_name = "savasy/bert-base-turkish-sentiment-cased"
+    # Hugging Face pipeline'ı doğrudan streamlit içinde yükleniyor
+    return pipeline(
+        "sentiment-analysis",
+        model=model_name,
+        tokenizer=model_name,
+        truncation=True,
+        max_length=512,
+    )
+
+
 def analyze_text(text: str) -> dict | None:
+    # Backend çevrimdışı ise modeli doğrudan yerel olarak Streamlit içinde çalıştır
+    health = check_backend_health()
+    if health.get("status") != "healthy":
+        try:
+            import time
+            t0 = time.perf_counter()
+            local_pipeline = get_local_pipeline()
+            results = local_pipeline(text)
+            elapsed_ms = (time.perf_counter() - t0) * 1000
+            
+            result = results[0]
+            label = result["label"].upper()
+            score = result["score"]
+            
+            label_tr_map = {
+                "POSITIVE": "POZİTİF 😊",
+                "NEGATIVE": "NEGATİF 😞",
+            }
+            
+            return {
+                "sentiment": label,
+                "sentiment_tr": label_tr_map.get(label, label),
+                "score": round(score, 4),
+                "confidence_pct": round(score * 100, 2),
+                "processing_time_ms": round(elapsed_ms, 2),
+                "text_length": len(text),
+                "model": "savasy/bert-base-turkish-sentiment-cased (Standalone/Yerel Mod)",
+            }
+        except Exception as e:
+            st.error(f"⚠️ Yerel model yükleme/analiz hatası: {str(e)}")
+            return None
+
+    # Backend çevrimiçi ise API isteği at
     try:
         r = requests.post(
             f"{BACKEND_URL}/analyze",
@@ -240,9 +287,6 @@ def analyze_text(text: str) -> dict | None:
         else:
             st.error(f"❌ API Hatası {r.status_code}: {r.json().get('detail', 'Bilinmeyen hata')}")
             return None
-    except requests.exceptions.ConnectionError:
-        st.error("🔌 Backend'e bağlanılamadı! Lütfen backend'i başlatın: `uvicorn backend.app:app --port 8000`")
-        return None
     except Exception as e:
         st.error(f"❗ Hata: {str(e)}")
         return None
@@ -285,7 +329,8 @@ with st.sidebar:
         st.markdown('<div class="status-badge">🟢 Backend Çevrimiçi</div>', unsafe_allow_html=True)
         st.markdown(f"<small style='color:#94a3b8'>{model_status}</small>", unsafe_allow_html=True)
     else:
-        st.markdown('<div class="status-badge status-badge-offline">🔴 Backend Çevrimdışı</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status-badge" style="background: rgba(96, 165, 250, 0.15); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa;">🔵 Yerel Model Aktif</div>', unsafe_allow_html=True)
+        st.markdown("<small style='color:#94a3b8'>Stand-alone Mod (API Sunucusu Yok)</small>", unsafe_allow_html=True)
 
     st.divider()
 
