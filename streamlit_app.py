@@ -313,16 +313,26 @@ for k, v in defaults.items():
 
 # ─── Örnek metin butonları — widget'lardan ÖNCE işlenmeli ─────────────────────
 def set_positive_example():
-    st.session_state.pending_text = (
-        "Bu ürün inanılmaz derecede iyi! Kalitesi mükemmel ve kargo çok hızlıydı. "
-        "Kesinlikle tavsiye ederim."
-    )
+    import random
+    pozitif_yorumlar = [
+        "Bu ürünü ikinci kez alıyorum, kalitesi gerçekten harika. Hızlı kargo için teşekkürler.",
+        "Beklentilerimin çok üzerinde bir ürün. Kesinlikle parasını hak ediyor, tavsiye ederim.",
+        "Kullanımı çok kolay ve pratik. Paketleme de gayet özenliydi, çok memnun kaldım.",
+        "Müşteri hizmetleri çok ilgiliydi, ürün de tam istediğim gibi geldi. Çok teşekkürler!",
+        "Harika bir alışveriş deneyimi oldu. Kargo ertesi gün kapımdaydı, ürün kalitesi şahane."
+    ]
+    st.session_state.pending_text = random.choice(pozitif_yorumlar)
 
 def set_negative_example():
-    st.session_state.pending_text = (
-        "Çok kötü bir deneyimdi. Ürün bozuk geldi, müşteri hizmetleri hiç ilgilenmedi. "
-        "Param boşa gitti."
-    )
+    import random
+    negatif_yorumlar = [
+        "Ürün maalesef kırık geldi. Paketleme çok özensizdi, kesinlikle tavsiye etmiyorum.",
+        "Görseldeki ürünle alakası yok, kalitesi çok düşük. İade sürecini başlattım.",
+        "Kargo günlerce gecikti ve gelen ürün çalışmıyor. Büyük bir hayal kırıklığı oldu.",
+        "Müşteri hizmetleri hiçbir soruma cevap vermedi. Ürün de beklediğim kalitede değil.",
+        "Parasına asla değmez. İlk kullanımda bozuldu, verdiğim paraya acıdım."
+    ]
+    st.session_state.pending_text = random.choice(negatif_yorumlar)
 
 
 # ─── SIDEBAR ──────────────────────────────────────────────────────────────────
