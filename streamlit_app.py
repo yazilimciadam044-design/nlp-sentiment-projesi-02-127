@@ -40,8 +40,8 @@ html, body, [class*="css"] {
 }
 
 /* Arka plan */
-.stApp {
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+.stApp, [data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
     min-height: 100vh;
 }
 
@@ -148,11 +148,16 @@ html, body, [class*="css"] {
     background: rgba(255,255,255,0.07) !important;
     border: 1px solid rgba(167,139,250,0.4) !important;
     border-radius: 14px !important;
-    color: #e2e8f0 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
     font-family: 'Inter', sans-serif !important;
     font-size: 1.15rem !important;
     line-height: 1.6 !important;
     min-height: 350px !important;
+}
+.stTextArea div[data-baseweb="textarea"] {
+    background-color: transparent !important;
+    border: none !important;
 }
 .stTextArea textarea:focus {
     border-color: #a78bfa !important;
