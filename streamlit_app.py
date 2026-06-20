@@ -11,8 +11,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ─── Konfigürasyon ────────────────────────────────────────────────────────────
+# Önce Streamlit Secrets (canlı ortam için), ardından .env veya varsayılan değerler
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 API_KEY = os.getenv("API_KEY", "supersecret-demo-key-12345")
+
+if "BACKEND_URL" in st.secrets:
+    BACKEND_URL = st.secrets["BACKEND_URL"]
+if "API_KEY" in st.secrets:
+    API_KEY = st.secrets["API_KEY"]
+
 HEADERS = {"X-API-Key": API_KEY, "Content-Type": "application/json"}
 
 # ─── Sayfa Ayarları ────────────────────────────────────────────────────────────

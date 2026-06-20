@@ -79,4 +79,20 @@ API_KEY=supersecret-demo-key-12345
 
 ---
 
+## ☁️ Canlıya Taşıma (Production Deployment)
+
+### Streamlit Community Cloud ile Canlıya Alma
+1. Kodlarınızı GitHub'a yükleyin (zaten yüklendi!).
+2. [Streamlit Community Cloud](https://share.streamlit.io/) sitesine giriş yapın.
+3. **"New app"** butonuna basın.
+4. GitHub deponuzu (`nlp-sentiment-projesi-02-127`), branch adını (`main`) ve ana dosya yolunu (`streamlit_app.py`) seçin.
+5. **"Advanced settings..."** kısmına tıklayarak **Secrets** bölümüne gidin ve API ayarlarınızı şu formatta ekleyin:
+   ```toml
+   BACKEND_URL = "https://backend-api-adresiniz.com"
+   API_KEY = "sizin-guvenli-api-anahtariniz"
+   ```
+6. **"Deploy!"** butonuna basarak uygulamanızı canlıya alın.
+
+---
+
 Geliştirici: **Berat PALA**
